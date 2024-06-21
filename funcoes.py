@@ -208,40 +208,59 @@ def menu_pesquisa():
 
 # Cadastro de novos clientes
 def cadastro_usu():
-
+    ja_existe = False
+    ja_existe1 = False
     # Inserindo dados
     print('-' * 50)
     email = input('Insira seu e-mail: ')
     print('-' * 50)
-    usu_novo = input('Insira seu nome de usuário: ')
-    print('-' * 50)
-    senha_usunovo = input('Insira sua senha: ')
-    print('-' * 50)
-    confirma = input('Confirme sua senha: ')
 
-    # Valida cadastro
-    if confirma != senha_usunovo:
-        comlinha('As senhas não são coincidentes')
+    # email já existente
+    for i in range(len(listas.usuarios)):
+        if listas.usuarios[i]['e-mail'] == email:
+                ja_existe1= True
+    if ja_existe1 == False:
 
-    elif confirma == senha_usunovo:
-        comlinha(f'usuario {usu_novo} cadastrado com sucesso ')
+        usu_novo = input('Insira seu nome de usuário: ')
+        print('-' * 50)
 
-        if len(listas.logado) == 0:
-            categoria = 'cliente'
-        elif len(listas.logado) == 1:
-            categoria = 'administrador'
+        # Usuário já existente
+        for i in range(len(listas.usuarios)):
+            if listas.usuarios[i]['usuario'] == usu_novo:
+                ja_existe= True
+        if ja_existe == False:
 
-        # Adicionando dados a um dicionario
-        dict = {
-            'e-mail': email,
-            'usuario': usu_novo,
-            'senha': senha_usunovo,
-            'categoria': categoria
-            }
-        
-        #Adicionando o dicionario a lista de usuarios
-        listas.usuarios.append(dict)
 
+            senha_usunovo = input('Insira sua senha: ')
+            print('-' * 50)
+            confirma = input('Confirme sua senha: ')
+
+            # Valida cadastro
+            if confirma != senha_usunovo:
+                comlinha('As senhas não são coincidentes')
+
+            elif confirma == senha_usunovo:
+                comlinha(f'usuario {usu_novo} cadastrado com sucesso ')
+
+                if len(listas.logado) == 0:
+                    categoria = 'cliente'
+                elif len(listas.logado) == 1:
+                    categoria = 'administrador'
+
+                # Adicionando dados a um dicionario
+                dict = {
+                    'e-mail': email,
+                    'usuario': usu_novo,
+                    'senha': senha_usunovo,
+                    'categoria': categoria
+                    }
+                
+                #Adicionando o dicionario a lista de usuarios
+                listas.usuarios.append(dict)
+        else:
+            print(' Nome de usuário já cadastrado')
+    else:
+        print(' E-mail de usuário já cadastrado ')
 # Logando em conta ja existente
 def login():
 
