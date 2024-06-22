@@ -583,3 +583,73 @@ def carrinho():
 
         else:
             comlinha("Opção Invalida, tente de novo.")
+def admin():
+    print()
+def cadastro_produto():
+            nome = str(input('insira o nome do novo produto: '))
+            categoria = str(input('insira a categoria do novo produto: '))
+            valor = float(input('insira o valor do novo produto: '))
+            quantidade = int(input('insira a quantidade em estoque do novo produto: '))
+            dc = {
+                'nome': nome,
+                'tipo': categoria,
+                'preço': valor,
+                'qtd_estoque': quantidade
+                }
+            print(dc)
+            listas.estoque.append(dc)
+def editar_produto():
+    for indice in range(len(listas.estoque)):
+        print(indice, "-", listas.estoque[indice])
+    indice2 = int(input('Digite o indice do produto que deseja editar: '))
+    produto = listas.estoque[indice2]
+    print(produto)
+    print('Produto encontrado. Digite os novos dados:')
+    nome2 = int(input('insira o indice do produto: '))
+    categoria2 = str(input('insira a nova categoria do produto: '))
+    valor2 = float(input('Novo preço: '))
+    quantidade2 = int(input('Nova quantidade em estoque: '))
+    produto['nome'] = nome2
+    produto['tipo'] = categoria2
+    produto['preço'] = valor2
+    produto['qtd_estoque'] = quantidade2
+def excluir_produto():
+    for indice in range(len(listas.estoque)):
+        print(indice, "-", listas.estoque[indice])
+
+    indice3 = int(input("Digite o indice do produto que deseja excluir: "))
+    produto2 = listas.estoque[indice3]
+    listas.estoque.pop(indice3)
+def listar_produtos():
+     print(listas.estoque)
+
+def menu_admin():
+    while True:
+        comlinha('Menu de login'.center(60))
+        comlinha(
+        '[1] Cadastro de produtos\n'
+        '[2] Editar dados de um produto\n'
+        '[3] Excluir um produto\n'
+        '[4] Listar todos os produtos cadatrados\n'
+        '[5] Emitir relatorio de vendas\n'
+        '[0] Sair do programa\n'
+        )
+        
+        op = int(input("insira a opção desejada: "))
+        
+        if op == 1:
+            cadastro_produto()
+        
+        if op == 2:
+            editar_produto()
+
+        if op == 3:
+            excluir_produto()
+
+        if op == 4:
+            listar_produtos()
+            
+        if op == 0:
+             print('Programa encerrado.')
+             break
+    menu_admin()
