@@ -2,36 +2,160 @@ import listas
 
 # Imprimindo todos os produtos
 def catalogo():
-    for produto in range(20):
-        print('-' * 60)
-        print(f"{produto:<4}{listas.estoque[produto]['nome']:<35}", end=' ')
-        print(f"{'R$'} {listas.estoque[produto]['preço']:>8.2f}")
+
+    encontrado_carrinho = False
+    seguindo = 0
+
+    while True:
+        for produto in range(seguindo, 10 + seguindo):
+            print('-' * 60)
+            print(f"{produto:<4}{listas.estoque[produto]['nome']:<35}", end=' ')
+            print(f"{'R$'} {listas.estoque[produto]['preço']:>8.2f}")
+        
+        comlinha(
+            '[1] Selecionar produto\n'
+            '[2] Ver mais...\n'
+            '[0] Voltar ao menu principal'
+            )
+
+        op = recebe_comlinha('Escolha uma opção: ')
+
+        if op == 1:
+                
+             # Recebendo indice
+                escolha_produto = recebe_comlinha("Informe o número do produto: ")
+
+                if escolha_produto >= 0 and escolha_produto < len(listas.estoque):
+
+                    print('-' * 60)
+                    ad_carrinho = input(f"Você deseja adicionar {listas.estoque[escolha_produto]['nome']} ao carrinho?[S/N]: ").upper()
+
+                    if ad_carrinho == 'S':
+
+                        qtd_ad_carrinho = recebe_comlinha("Informe a quantidade que dejesa adicionar ao carrinho: ")
+
+                        if qtd_ad_carrinho > 0:
+
+                            # procurando se o produto ja exite no carrinho
+                            for produto_c in range(len(listas.carrinho)):
+                                
+                                if listas.estoque[escolha_produto]['nome'] == listas.carrinho[produto_c]['nome']:
+
+                                    listas.carrinho[produto_c]['qtd_estoque'] += qtd_ad_carrinho
+
+                                    encontrado_carrinho = True
+
+                                    # Encontrando produto na lista
+                                    for produto_e in range(len(listas.estoque)):
+
+                                        # Produto encontrado
+                                        if listas.carrinho[produto_c]['nome'] == listas.estoque[produto_e]['nome']:
+
+                                            # quantidade em estoque
+                                            if qtd_ad_carrinho <= listas.estoque[produto_e]['qtd_estoque']:
+                                                listas.estoque[produto_e]['qtd_estoque'] -= qtd_ad_carrinho
+                                                
+                                                comlinha('Produto adicionado ao carrinho')
+                                            
+                                            # Falta em estoque
+                                            else:
+                                                comlinha('Quantidade invalida, exede o que temos em estoque. Por favor, tente de novo')
+
+                                                listas.carrinho[produto_c]['qtd_estoque'] -= qtd_ad_carrinho
+
+                                            break
+                                    break           
+
+                            if encontrado_carrinho == False:
+
+                                listas.carrinho.append(listas.estoque[escolha_produto].copy())
+                                listas.carrinho[-1]['qtd_estoque'] = qtd_ad_carrinho
+
+                                # Encontrando produto na lista
+                                for produto in range(len(listas.estoque)):
+
+                                    # Produto encontrado
+                                    if listas.carrinho[-1]['nome'] == listas.estoque[produto]['nome']:
+
+                                        # quantidade em estoque
+                                        if qtd_ad_carrinho <= listas.estoque[produto]['qtd_estoque']:
+                                            listas.estoque[produto]['qtd_estoque'] -= qtd_ad_carrinho
+                                            
+                                            comlinha('Produto adicionado ao carrinho')
+                                        
+                                        # Falta em estoque
+                                        else:
+                                            comlinha('Quantidade invalida, exede o que temos em estoque. Por favor, tente de novo')
+
+                                            listas.carrinho.pop()
+
+                                            break
+
+                        else:
+                            comlinha('ERRO! Quantidade Invalido, tente de novo.')
+
+                            continue
+
+                    elif ad_carrinho == 'N':
+
+                        comlinha(f'Você não quis adiconar {listas.estoque[escolha_produto]["nome"]} ao carrinho.')
+
+                        continue
+
+                    #Tradando erro
+                    else:
+
+                        comlinha("ERRO! Opção invalida, tente de novo.")
+
+                        continue
+
+                else:
+                    comlinha("Erro! Produto invalido, tente novamente")
+
+                    continue
+        
+        elif op == 2:
+            seguindo += 10
+            continue
+
+        elif op == 0:
+            comlinha('Voltando ao menu pricipal')
+            break
+        
+        else:
+            comlinha('Erro! Opção invalida')
 
 # Prints com linhas
 def comlinha(a):
+
     print('-' * 60)
     print(a)
 
-# Inputs com linhas
+# Inputs de int com linhas
 def recebe_comlinha(a):
     print('-' * 60)
     valor = int(input(a))
 
     return valor
 
+# Inputs de str com linhas
+def recebe_comlinha_str(a):
+    print('-' * 60)
+    valor = input(a)
+
+    return valor
+
 # Exibindo produto
 def exibir_lista(lista):
 
-    cont_pesquisa = 0
-
-    comlinha(
-    f"{cont_pesquisa} " 
-    f"{lista[cont_pesquisa]['nome']} " 
-    f"R$ {lista[cont_pesquisa]['preço']:.2f} " 
-    f"tipo {lista[cont_pesquisa]['tipo']}, "
-    f"tem em estoque {lista[cont_pesquisa]['qtd_estoque']}"
-    )
-    cont_pesquisa += 1
+    for i in range(len(lista)):
+        comlinha(
+        f"{i} " 
+        f"{lista[i]['nome']} " 
+        f"R$ {lista[i]['preço']:.2f} " 
+        f"tipo {lista[i]['tipo']}, "
+        f"tem {lista[i]['qtd_estoque']} em estoque"
+        )
 
 # Barra de pesquisa
 def pesquisas(chave):
@@ -58,9 +182,6 @@ def pesquisas(chave):
 
                     # Armazenando produto
                     listas.pesquisa.append(produto.copy())
-
-                    # Exibindo produto
-                    exibir_lista(listas.pesquisa)
                 
             # Produto não existe no estoque
             if encontrado_pesquisa == False:
@@ -72,9 +193,12 @@ def pesquisas(chave):
 # Adiciona o produto ao carrinho ou pesquisa de novo
 def menu_pesquisa():
      
-     encontrado_carrinho = False
+    # Exibindo produto
+    exibir_lista(listas.pesquisa)
      
-     while True:
+    encontrado_carrinho = False
+     
+    while True:
         # Menu de pesquisa
         comlinha('Opções da Pesquisa'.center(60))
         comlinha(
@@ -91,9 +215,10 @@ def menu_pesquisa():
             # Selecionando produto
             case 1:
 
+                # Recebendo indice
                 escolha_produto = recebe_comlinha("Informe o número do produto: ")
 
-                if escolha_produto >= 0:
+                if escolha_produto >= 0 and escolha_produto < len(listas.pesquisa):
 
                     print('-' * 60)
                     ad_carrinho = input(f"Você deseja adicionar {listas.pesquisa[escolha_produto]['nome']} ao carrinho?[S/N]: ").upper()
@@ -230,7 +355,6 @@ def cadastro_usu():
     if ja_existe1 == False:
 
         usu_novo = input('Insira seu nome de usuário: ')
-        print('-' * 50)
 
         # Usuário já existente
         for i in range(len(listas.usuarios)):
@@ -238,7 +362,7 @@ def cadastro_usu():
                 ja_existe= True
         if ja_existe == False:
 
-
+            print('-' * 50)
             senha_usunovo = input('Insira sua senha: ')
             print('-' * 50)
             confirma = input('Confirme sua senha: ')
@@ -250,9 +374,10 @@ def cadastro_usu():
             elif confirma == senha_usunovo:
                 comlinha(f'usuario {usu_novo} cadastrado com sucesso ')
 
-                if len(listas.logado) == 0:
+                if listas.logado['categoria'] == 'cliente':
                     categoria = 'cliente'
-                elif len(listas.logado) == 1:
+
+                elif listas.logado['categoria'] == 'administrador':
                     categoria = 'administrador'
 
                 # Adicionando dados a um dicionario
@@ -266,9 +391,9 @@ def cadastro_usu():
                 #Adicionando o dicionario a lista de usuarios
                 listas.usuarios.append(dict)
         else:
-            print(' Nome de usuário já cadastrado')
+            comlinha('Nome de usuário já cadastrado')
     else:
-        print(' E-mail de usuário já cadastrado ')
+        comlinha(' E-mail de usuário já cadastrado ')
 
 # Logando em conta ja existente
 def login():
@@ -284,12 +409,14 @@ def login():
     # Encontrando usuario
     for i in range(len(listas.usuarios)):
 
-        if listas.usuarios[i]['usuario'] == usu:
+        if listas.usuario[i]['usuario'] == usu:
             comlinha('Usúario encontrado.')
 
             if listas.usuarios[i]['senha'] == senha:
+
                 comlinha(f'Login concedido, bem vindo {usu}.')
-                listas.logado.append(listas.usuarios[i].copy())
+
+                listas.logado = listas.usuarios[i].copy()
                 encontrado = True
                 break
 
@@ -298,6 +425,7 @@ def login():
                 break
     
     if encontrado == False:
+
         comlinha('Usuário não encontrado, tente de novo.')
 
 def recuperar_senha():
@@ -327,7 +455,8 @@ def menu_login():
         while True:
 
             # Usuário não logado
-            if len(listas.logado) == 0:
+            if listas.logado['usuario'] == 'Visitante' and listas.logado['categoria'] == 'cliente':
+
                 comlinha('Menu de login'.center(60))
                 comlinha(
                 '[1] Cadastro de novo usuário\n'
@@ -336,16 +465,19 @@ def menu_login():
                 '[0] Voltar ao menu principal'
                 )
 
-                op = recebe_comlinha("insira a opção desejada: ")
+                op = recebe_comlinha("Insira a opção desejada: ")
                 
                 if op == 1:
                     cadastro_usu()
-                
+                    continue
+
                 elif op == 2:
                     login()
+                    continue
 
                 elif op == 3:
                     recuperar_senha()
+                    continue
 
                 elif op == 0:
                     comlinha('Voltando ao menu Principal')
@@ -355,39 +487,39 @@ def menu_login():
                     print('Erro! Opção invalida, tente novamente! ')
     
             # Usuário logado
-            elif len(listas.logado) == 1:
                 
-                if listas.logado[0]['categoria'] == 'administrador':
-                    comlinha('Menu de login'.center(60))
-                    comlinha(
-                    f'Olá {listas.logado[0]["usuario"]}\n'
-                    '[1] Sair da conta\n'
-                    '[2] Cadastrar ADM\n'
-                    '[0] Voltar ao menu principal')
+            elif listas.logado['categoria'] == 'administrador':
+                comlinha('Menu de login'.center(60))
+                comlinha(
+                f'Olá {listas.logado["usuario"]}\n'
+                '[1] Sair da conta\n'
+                '[2] Cadastrar ADM\n'
+                '[0] Voltar ao menu principal')
 
-                else: 
-                    comlinha('Menu de login'.center(60))   
-                    comlinha(
-                    f'Olá {listas.logado[0]["usuario"]}\n'
-                    '[1] Sair da conta\n'
-                    '[0] Voltar ao menu principal')
+            else: 
+                comlinha('Menu de login'.center(60))   
+                comlinha(
+                f'Olá {listas.logado["usuario"]}\n'
+                '[1] Sair da conta\n'
+                '[0] Voltar ao menu principal')
 
-                op = recebe_comlinha("insira a opção desejada: ")
-                
-                if op == 1:
-                    listas.logado.clear()
-                    comlinha('Você foi deslogado. Voltando ao menu principal')
-                    continue
+            op = recebe_comlinha("insira a opção desejada: ")
+            
+            if op == 1:
+                listas.logado['usuario'] = 'Visitante'
+                listas.logado['categoria'] = 'cliente'
+                comlinha('Você foi deslogado.')
+                continue
 
-                elif op == 2 and listas.logado[0]['categoria'] == 'administrador':
-                    cadastro_usu()
+            elif op == 2 and listas.logado['categoria'] == 'administrador':
+                cadastro_usu()
 
-                elif op == 0:
-                    comlinha('Voltando ao menu Principal')
-                    break
-                
-                else:
-                    print('Erro! Opção invalida, tente novamente! ')
+            elif op == 0:
+                comlinha('Voltando ao menu Principal')
+                break
+            
+            else:
+                print('Erro! Opção invalida, tente novamente! ')
 
 # Finaliza compra e armazena dados
 def finalizar_compra(a= 999):
@@ -400,11 +532,15 @@ def finalizar_compra(a= 999):
             for i in range(len(listas.carrinho)):
                 soma = listas.carrinho[i]['preço'] * listas.carrinho[i]['qtd_estoque']
                 soma_total += soma
+            
+            listas.dados_compra.append(listas.carrinho.copy())
 
         else:
             soma_total = listas.carrinho[a]['preço'] * listas.carrinho[a]['qtd_estoque']
+            
+            listas.dados_compra.append(listas.carrinho[a].copy())
 
-        comlinha(f'Valor total da compra sera {soma_total:.2f}')
+        comlinha(f'Valor total da compra sera R${soma_total:.2f}')
         comlinha(
             'Informe a forma de pagamento\n'
             '[1] Débito\n'
@@ -419,6 +555,8 @@ def finalizar_compra(a= 999):
 
             pagamento = 'Débito'
 
+            print('-' * 60)
+            endereço = input('Informe o endereço de entrega, frete gratis: ')
             num_cartão = recebe_comlinha('Informe o número do cartão: ')
             cod_segurança = recebe_comlinha('Informe o código de segurança: ')
 
@@ -426,6 +564,8 @@ def finalizar_compra(a= 999):
 
             pagamento = 'Crédito'
 
+            print('-' * 60)
+            endereço = input('Informe o endereço de entrega, frete gratis: ')
             num_cartão = recebe_comlinha('Informe o número do cartão: ')
             cod_segurança = recebe_comlinha('Informe o código de segurança: ')
 
@@ -433,6 +573,8 @@ def finalizar_compra(a= 999):
 
             pagamento = 'Pix'
 
+            print('-' * 60)
+            endereço = input('Informe o endereço de entrega, frete gratis: ')
             comlinha('chave aleatoria:')
             comlinha('dcta478j-196l-03fm-t6gh-4298er7845m2')
         
@@ -445,27 +587,35 @@ def finalizar_compra(a= 999):
 
         dados_com = {'usuario': listas.logado.copy(), 'valor_total': soma_total, 'pagamento': pagamento, 'produtos': listas.dados_compra.copy()}
 
-        listas.dados_compra.append(dados_com.copy())
-        listas.relatorio.append(listas.dados_compra.copy())
+        listas.relatorio.append(dados_com.copy())
 
         comlinha(
-            f'Usuário {dados_com["usuario"][0]["usuario"]}\n'
+            f'Usuário {dados_com["usuario"]["usuario"]}\n'
             f'Forma de pagamento {dados_com["pagamento"]}\n'
             f'Valor total {dados_com["valor_total"]:.2f}'
         )
 
-        exibir_lista(dados_com['produtos'][0])
+        if a == 999:
+            exibir_lista(dados_com['produtos'][0])
 
+            listas.carrinho.clear()
+        
+        else:
+            exibir_lista(dados_com['produtos'])
+
+            listas.carrinho.pop(a)
+
+        comlinha("Boa compra, Volte sempre!")
         dados_com.clear()
         listas.dados_compra.clear()
+
+        break
 
 # Opções carrinho
 def carrinho():
 
     # Loop infinito
     while True:
-
-        cont_pesquisa = 0
 
         # Menu do carrinho
         comlinha ("Carrinho de Compras".center(60))
@@ -483,6 +633,7 @@ def carrinho():
         if opcao == 1:
             
             if len(listas.carrinho) >= 1:
+
                 # Exibindo produto
                 exibir_lista(listas.carrinho)
 
@@ -491,10 +642,21 @@ def carrinho():
                 # Ecluindo produto
                 if item_excluir >= 0 or 0 < item_excluir < len(listas.carrinho):
                     comlinha(f"{listas.carrinho[item_excluir]['nome']} excluido do carrinho")
+
+                    # Encontrando produto na lista
+                    for produto_e in range(len(listas.estoque)):
+
+                        # Produto encontrado
+                        if listas.carrinho[item_excluir]['nome'] == listas.estoque[produto_e]['nome']:
+
+                            # Devolvendo ao carrinho
+                            listas.estoque[produto_e]['qtd_estoque'] += listas.carrinho[item_excluir]['qtd_estoque']
+
                     listas.carrinho.pop(item_excluir)
 
                 else:
                     comlinha('Produto não encontrado, tente de novo')
+
             else:
                 comlinha('Carrinho vazio')
 
@@ -502,21 +664,43 @@ def carrinho():
         elif opcao == 2:
 
             if len(listas.carrinho) >= 1:
+
                 # Exibindo produto
                 exibir_lista(listas.carrinho)
 
                 item_editado = recebe_comlinha("Digite o indice do produto que deseja editar: ")
                 nova_qtd = recebe_comlinha("Nova quantidade em estoque: ")
 
-                if item_editado >= 0 or 0 < item_editado < len(listas.carrinho):
+                if item_editado == 0 or 0 < item_editado < len(listas.carrinho):
 
                     if nova_qtd > 0:
                         comlinha(f"{listas.carrinho[item_editado]['nome']} do carrinho foi editado")
+
+                        # Encontrando produto na lista
+                        for produto_e in range(len(listas.estoque)):
+
+                            # Produto encontrado
+                            if listas.carrinho[item_editado]['nome'] == listas.estoque[produto_e]['nome']:
+
+                                # Devolvendo ao carrinho
+                                listas.estoque[produto_e]['qtd_estoque'] += (listas.carrinho[item_editado]['qtd_estoque'] - nova_qtd)
+
                         listas.carrinho[item_editado]['qtd_estoque'] = nova_qtd
                     
                     elif nova_qtd == 0:
+
                         comlinha("Quantidade 0 exclui o produto do carrinho")
                         comlinha(f"{listas.carrinho[item_editado]['nome']} excluido do carrinho")
+
+                        # Encontrando produto na lista
+                        for produto_e in range(len(listas.estoque)):
+
+                            # Produto encontrado
+                            if listas.carrinho[item_excluir]['nome'] == listas.estoque[produto_e]['nome']:
+
+                                # Devolvendo ao carrinho
+                                listas.estoque[produto_e]['qtd_estoque'] += listas.carrinho[item_excluir]['qtd_estoque']
+
                         listas.carrinho.pop(item_editado)
                     
                     else:
@@ -530,6 +714,7 @@ def carrinho():
 
         # Listando carrinho
         elif opcao == 3:
+
             if len(listas.carrinho) >= 1:
                 # Exibindo produto
                 exibir_lista(listas.carrinho)
@@ -541,7 +726,8 @@ def carrinho():
         elif opcao == 4:
             
             if len(listas.carrinho) >= 1:
-                if len(listas.logado) == 1:
+
+                if listas.logado['usuario'] != 'Visitante':
 
                     # Exibindo produto
                     exibir_lista(listas.carrinho)
@@ -583,45 +769,167 @@ def carrinho():
 
         else:
             comlinha("Opção Invalida, tente de novo.")
-def admin():
-    print()
+
+# Cadastrando novos produtos no estoque
 def cadastro_produto():
-            nome = str(input('insira o nome do novo produto: '))
-            categoria = str(input('insira a categoria do novo produto: '))
+            
+            encontrado_estoque = False
+
+            nome = recebe_comlinha_str('insira o nome do novo produto: ')
+            categoria = recebe_comlinha_str('insira a categoria do novo produto: ')
+            print('-' * 60)
             valor = float(input('insira o valor do novo produto: '))
-            quantidade = int(input('insira a quantidade em estoque do novo produto: '))
+            quantidade = recebe_comlinha('insira a quantidade em estoque do novo produto: ')
+
             dc = {
                 'nome': nome,
                 'tipo': categoria,
                 'preço': valor,
                 'qtd_estoque': quantidade
                 }
-            print(dc)
-            listas.estoque.append(dc)
-def editar_produto():
-    for indice in range(len(listas.estoque)):
-        print(indice, "-", listas.estoque[indice])
-    indice2 = int(input('Digite o indice do produto que deseja editar: '))
-    produto = listas.estoque[indice2]
-    print(produto)
-    print('Produto encontrado. Digite os novos dados:')
-    nome2 = int(input('insira o indice do produto: '))
-    categoria2 = str(input('insira a nova categoria do produto: '))
-    valor2 = float(input('Novo preço: '))
-    quantidade2 = int(input('Nova quantidade em estoque: '))
-    produto['nome'] = nome2
-    produto['tipo'] = categoria2
-    produto['preço'] = valor2
-    produto['qtd_estoque'] = quantidade2
-def excluir_produto():
-    for indice in range(len(listas.estoque)):
-        print(indice, "-", listas.estoque[indice])
 
-    indice3 = int(input("Digite o indice do produto que deseja excluir: "))
-    produto2 = listas.estoque[indice3]
-    listas.estoque.pop(indice3)
+            # Encontrando produto na lista
+            for produto_e in range(len(listas.estoque)):
+
+                # Produto encontrado
+                if dc['nome'] == listas.estoque[produto_e]['nome']:
+                    encontrado_estoque = True
+
+            if encontrado_estoque == False:
+                listas.estoque.append(dc.copy())
+                comlinha(f'{dc["nome"]} cadastrado com sucesso.')
+            
+            else:
+                comlinha("Produto já existe, cadastro cancelado.")
+
+# Editar produtos do estoque
+def editar_produto():
+
+    while True:
+
+        sub_opcao = 999
+
+        for indice in range(len(listas.estoque)):
+            comlinha(f'{indice} - {listas.estoque[indice]}')
+
+        excluir_produto = recebe_comlinha_str('Deseja excluir um item? [S/N]').upper()
+
+        if excluir_produto == 'S':
+
+            comlinha("Editar Produto".center(50))
+                    
+            #Recebenco a posição do produto
+            indice = recebe_comlinha("Informe o indice do produto: ")
+
+            #Validando indice
+            if indice >= 0 and indice < len(listas.estoque):
+                
+                #Submenu
+                while sub_opcao != 5:
+                    print(
+                        "\n[1] Nome"
+                        "\n[2] Categoria"
+                        "\n[3] Preço"
+                        "\n[4] Quantidade"
+                        "\n[0] Voltar a área de administração"
+                        )
+                                
+                    sub_opcao = recebe_comlinha("Escolha uma opção: ")
+                    
+                    #Validando a sub_opção
+                    if sub_opcao >= 0 and sub_opcao < 5:
+
+                        #Recebendo novo valor e tipo a ser alterado
+                        match sub_opcao:
+                            case 1:
+                                tipo = 'nome'
+                                novo_valor = recebe_comlinha_str("Informe o novo nome: ")
+
+                            case 2:
+                                tipo = 'categoria'
+                                novo_valor = recebe_comlinha_str("Informe a nova categoria: ") 
+
+                            case 3:
+                                tipo = 'preço'
+                                print('-' * 60)
+                                novo_valor = float(input("Informe o novo preço: "))
+
+                            case 4:
+                                tipo = 'qtd_estoque'
+                                novo_valor = recebe_comlinha("Informe a nova quantidade: ")
+                            
+                            case 0:
+                                comlinha('Voltando ao menu de administração')
+                                
+                                break
+
+                        #Executando a alteração de valor
+                        listas.estoque[indice][tipo] = novo_valor
+
+                    else:
+                        comlinha('Opção invalida')
+
+            else:
+                comlinha("Valor do indice invalido")
+
+        elif excluir_produto == 'N':
+            comlinha('Voltando a área do administrador')
+
+            break
+
+        else:
+            comlinha('Erro! Tente novamente.')
+
+            continue
+
+def relatorio():
+
+    for indice in range(len(listas.relatorio)):
+
+        comlinha(
+            f"O {listas.relatorio[indice]['usuario']['categoria']} {listas.relatorio[indice]['usuario']['usuario']}\n"
+            f"E-mail: {listas.relatorio[indice]['usuario']['e-mail']}\n"
+            f"Comprou no {listas.relatorio[indice]['pagamento']} R${listas.relatorio[indice]['valor_total']:.2f}\n"
+            "Produtos comprados:"     
+            )
+
+        exibir_lista(listas.relatorio[indice]['produtos'][0])
+
+# Excluir produtos do estoque
+def excluir_produto():
+
+    while True:
+        for indice in range(len(listas.estoque)):
+            comlinha(f'{indice} - {listas.estoque[indice]}')
+
+        excluir_produto = recebe_comlinha_str('Deseja excluir um item? [S/N]').upper()
+
+        if excluir_produto == 'S':
+            indice3 = recebe_comlinha("Digite o indice do produto que deseja excluir: ")
+
+            if indice3 > 0 and indice3 <= len(listas.estoque):
+                comlinha(f'{listas.estoque[indice3]["nome"]} excluido do estoque.')
+
+                listas.estoque.pop(indice3)
+
+            else:
+                comlinha('Indice invalido, tente novamente')
+        
+        elif excluir_produto == 'N':
+            comlinha('Voltando a área do administrador')
+
+            break
+
+        else:
+            comlinha('Erro! Tente novamente.')
+
+            continue
+
+# Exibir produtos do estoque
 def listar_produtos():
-     print(listas.estoque)
+     
+    for indice in range(len(listas.estoque)):
+        comlinha(f'{indice} - {listas.estoque[indice]}')
 
 def menu_admin():
     while True:
@@ -632,24 +940,30 @@ def menu_admin():
         '[3] Excluir um produto\n'
         '[4] Listar todos os produtos cadatrados\n'
         '[5] Emitir relatorio de vendas\n'
-        '[0] Sair do programa\n'
+        '[0] Sair do programa'
         )
         
-        op = int(input("insira a opção desejada: "))
+        op = recebe_comlinha("Insira a opção desejada: ")
         
         if op == 1:
             cadastro_produto()
         
-        if op == 2:
+        elif op == 2:
             editar_produto()
 
-        if op == 3:
+        elif op == 3:
             excluir_produto()
 
-        if op == 4:
+        elif op == 4:
             listar_produtos()
+        
+        elif op == 5:
+            relatorio()
             
-        if op == 0:
+        elif op == 0:
              print('Programa encerrado.')
              break
-    menu_admin()
+        
+        else:
+            comlinha('Opção invalida! Tente novamente.')
+            continue
