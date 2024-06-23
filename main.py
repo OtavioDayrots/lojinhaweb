@@ -12,36 +12,26 @@ while True:
 
     # Menu
     funcoes.comlinha('Menu Principal'.center(60))
-    if len(listas.logado) == 0:
+    if listas.logado['categoria'] == 'administrador':
         funcoes.comlinha(
-            '[1] Barra de Pesquisa\n'
-            '[2] Filtrar de produtos\n'
-            '[3] Logar\n'
-            '[4] Carrinho\n'
-            '[5] Catalago\n'
-            '[0] Sair'
-    )
-    else:
-        if listas.logado[0]['categoria'] == 'administrador':
-            funcoes.comlinha(
-            '[1] Barra de Pesquisa\n'
-            '[2] Filtrar de produtos\n'
-            '[3] Logar\n'
-            '[4] Carrinho\n'
-            '[5] Catalago\n'
-            '[6] Administrador\n'
-            '[0] Sair'
-            )
+        '[1] Barra de Pesquisa\n'
+        '[2] Filtrar de produtos\n'
+        '[3] Logar\n'
+        '[4] Carrinho\n'
+        '[5] Catalago\n'
+        '[6] Área do administrador\n'
+        '[0] Sair'
+        )
 
-        else:
-            funcoes.comlinha(
-            '[1] Barra de Pesquisa\n'
-            '[2] Filtrar de produtos\n'
-            '[3] Logar\n'
-            '[4] Carrinho\n'
-            '[5] Catalago\n'
-            '[0] Sair'
-    )
+    else:
+        funcoes.comlinha(
+        '[1] Barra de Pesquisa\n'
+        '[2] Filtrar de produtos\n'
+        '[3] Logar\n'
+        '[4] Carrinho\n'
+        '[5] Catalago\n'
+        '[0] Sair'
+)
 
         
     opcao = funcoes.recebe_comlinha("Escolha uma ação: ")
@@ -79,15 +69,34 @@ while True:
             # Adiciona o produto ao carrinho ou pesquisa de novo    
             funcoes.menu_pesquisa()
         
-        #Login
+        # Login
         case 3:
             funcoes.menu_login()
-        
+
+        # Carrinho
         case 4:
             funcoes.carrinho()
 
+        case 5:
+
+            # Exibição dos produtos
+            funcoes.catalogo()
+
+        # Area do administrador
         case 6:
-            funcoes.menu_admin()
+            if listas.logado['categoria'] == 'administrador':
+                funcoes.menu_admin()
+
+            else:
+                funcoes.comlinha("ERRO! Opção invalida, tente de novo.")
+
+            continue
+
+        case 0:
+            funcoes.comlinha("Volte sempre :)")
+            print('-' * 60)
+
+            break
 
         #Tratando erro
         case _:
@@ -95,8 +104,3 @@ while True:
             funcoes.comlinha("ERRO! Opção invalida, tente de novo.")
 
             continue
-
-    # Exibição dos produtos
-    print(listas.estoque[0])
-    funcoes.catalogo()
-  
