@@ -346,7 +346,7 @@ def cadastro_usu():
     # Inserindo dados
     email = recebe_comlinha_str('Insira seu e-mail: ')
 
-    if email[-9:] == '@gmail.com':
+    if email[-10:] == '@gmail.com':
 
         # email já existente
         for i in range(len(listas.usuarios)):
