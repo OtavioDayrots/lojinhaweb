@@ -1,6 +1,7 @@
 # Importando listas e funções
 import listas
 import funcoes
+import json
 
 # Controles
 encontrado_pesquisa = False
@@ -104,3 +105,29 @@ while True:
             funcoes.comlinha("ERRO! Opção invalida, tente de novo.")
 
             continue
+
+# Devolvendo ao estoque
+if len(listas.carrinho) > 0:
+
+    for produto_c in range(len(listas.carrinho)):
+
+        # Encontrando produto na lista
+        for produto_e in range(len(listas.estoque)):
+
+            # Produto encontrado
+            if listas.carrinho[produto_c]['nome'] == listas.estoque[produto_e]['nome']:
+
+                # Devolvendo ao carrinho
+                listas.estoque[produto_e]['qtd_estoque'] += listas.carrinho[produto_c]['qtd_estoque']
+
+listas.dados_usua= open('usuarios.json', 'w', encoding='utf-8')
+json.dump(listas.usuarios, listas.dados_usua)
+listas.dados_usua.close()
+
+listas.dados_estoque= open('estoque.json', 'w', encoding='utf-8')
+json.dump(listas.estoque, listas.dados_estoque)
+listas.dados_estoque.close()
+
+listas.dados_relatorio= open('relatorio.json', 'w', encoding='utf-8')
+json.dump(listas.relatorio, listas.dados_relatorio)
+listas.dados_relatorio.close()
