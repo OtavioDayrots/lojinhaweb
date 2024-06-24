@@ -10,7 +10,7 @@ def catalogo():
         for produto in range(seguindo, 10 + seguindo):
             print('-' * 60)
             print(f"{produto:<4}{listas.estoque[produto]['nome']:<35}", end=' ')
-            print(f"{'R$'} {listas.estoque[produto]['preço']:>8.2f}")
+            print(f"{'R$'} {listas.estoque[produto]['preco']:>8.2f}")
         
         comlinha(
             '[1] Selecionar produto\n'
@@ -152,7 +152,7 @@ def exibir_lista(lista):
         comlinha(
         f"{i} " 
         f"{lista[i]['nome']} " 
-        f"R$ {lista[i]['preço']:.2f} " 
+        f"R$ {lista[i]['preco']:.2f} " 
         f"tipo {lista[i]['tipo']}, "
         f"tem {lista[i]['qtd_estoque']} em estoque"
         )
@@ -344,56 +344,58 @@ def cadastro_usu():
     ja_existe1 = False
 
     # Inserindo dados
-    print('-' * 50)
-    email = input('Insira seu e-mail: ')
-    print('-' * 50)
+    email = recebe_comlinha_str('Insira seu e-mail: ')
 
-    # email já existente
-    for i in range(len(listas.usuarios)):
-        if listas.usuarios[i]['e-mail'] == email:
-                ja_existe1= True
-    if ja_existe1 == False:
+    if email[-9:] == '@gmail.com':
 
-        usu_novo = input('Insira seu nome de usuário: ')
-
-        # Usuário já existente
+        # email já existente
         for i in range(len(listas.usuarios)):
-            if listas.usuarios[i]['usuario'] == usu_novo:
-                ja_existe= True
-        if ja_existe == False:
+            if listas.usuarios[i]['e-mail'] == email:
+                    ja_existe1= True
+        if ja_existe1 == False:
 
-            print('-' * 50)
-            senha_usunovo = input('Insira sua senha: ')
-            print('-' * 50)
-            confirma = input('Confirme sua senha: ')
+            usu_novo = recebe_comlinha_str('Insira seu nome de usuário: ')
 
-            # Valida cadastro
-            if confirma != senha_usunovo:
-                comlinha('As senhas não são coincidentes')
+            # Usuário já existente
+            for i in range(len(listas.usuarios)):
+                if listas.usuarios[i]['usuario'] == usu_novo:
+                    ja_existe= True
+            if ja_existe == False:
 
-            elif confirma == senha_usunovo:
-                comlinha(f'usuario {usu_novo} cadastrado com sucesso ')
-
-                if listas.logado['categoria'] == 'cliente':
-                    categoria = 'cliente'
-
-                elif listas.logado['categoria'] == 'administrador':
-                    categoria = 'administrador'
-
-                # Adicionando dados a um dicionario
-                dict = {
-                    'e-mail': email,
-                    'usuario': usu_novo,
-                    'senha': senha_usunovo,
-                    'categoria': categoria
-                    }
                 
-                #Adicionando o dicionario a lista de usuarios
-                listas.usuarios.append(dict)
+                senha_usunovo = recebe_comlinha_str('Insira sua senha: ')
+                
+                confirma = recebe_comlinha_str('Confirme sua senha: ')
+
+                # Valida cadastro
+                if confirma != senha_usunovo:
+                    comlinha('As senhas não são coincidentes')
+
+                elif confirma == senha_usunovo:
+                    comlinha(f'usuario {usu_novo} cadastrado com sucesso ')
+
+                    if listas.logado['categoria'] == 'cliente':
+                        categoria = 'cliente'
+
+                    elif listas.logado['categoria'] == 'administrador':
+                        categoria = 'administrador'
+
+                    # Adicionando dados a um dicionario
+                    dict = {
+                        'e-mail': email,
+                        'usuario': usu_novo,
+                        'senha': senha_usunovo,
+                        'categoria': categoria
+                        }
+                    
+                    #Adicionando o dicionario a lista de usuarios
+                    listas.usuarios.append(dict)
+            else:
+                comlinha('Nome de usuário já cadastrado')
         else:
-            comlinha('Nome de usuário já cadastrado')
+            comlinha(' E-mail de usuário já cadastrado ')
     else:
-        comlinha(' E-mail de usuário já cadastrado ')
+        comlinha('E-mail Invalido')
 
 # Logando em conta ja existente
 def login():
@@ -401,15 +403,14 @@ def login():
     encontrado = False
 
     # Recebendo dados
-    print('-' * 50)
-    usu = (input('Informe o usuário: '))
-    print('-' * 50)
-    senha = (input('Informe a senha: '))
+    
+    usu = recebe_comlinha_str('Informe o usuário: ')
+    senha = recebe_comlinha_str('Informe a senha: ')
     
     # Encontrando usuario
     for i in range(len(listas.usuarios)):
 
-        if listas.usuario[i]['usuario'] == usu:
+        if listas.usuarios[i]['usuario'] == usu:
             comlinha('Usúario encontrado.')
 
             if listas.usuarios[i]['senha'] == senha:
@@ -432,8 +433,7 @@ def recuperar_senha():
 
     encontrado = False
 
-    print('-' * 50)
-    recuperar = input('Informe seu email: ')
+    recuperar = recebe_comlinha_str('Informe seu email: ')
 
     # Encontrando usuario
     for i in range(len(listas.usuarios)):
@@ -530,13 +530,13 @@ def finalizar_compra(a= 999):
 
         if a == 999:
             for i in range(len(listas.carrinho)):
-                soma = listas.carrinho[i]['preço'] * listas.carrinho[i]['qtd_estoque']
+                soma = listas.carrinho[i]['preco'] * listas.carrinho[i]['qtd_estoque']
                 soma_total += soma
             
             listas.dados_compra.append(listas.carrinho.copy())
 
         else:
-            soma_total = listas.carrinho[a]['preço'] * listas.carrinho[a]['qtd_estoque']
+            soma_total = listas.carrinho[a]['preco'] * listas.carrinho[a]['qtd_estoque']
             
             listas.dados_compra.append(listas.carrinho[a].copy())
 
@@ -812,7 +812,7 @@ def editar_produto():
         for indice in range(len(listas.estoque)):
             comlinha(f'{indice} - {listas.estoque[indice]}')
 
-        excluir_produto = recebe_comlinha_str('Deseja excluir um item? [S/N]').upper()
+        excluir_produto = recebe_comlinha_str('Deseja editar um item? [S/N]\: ').upper()
 
         if excluir_produto == 'S':
 
@@ -868,6 +868,8 @@ def editar_produto():
 
                     else:
                         comlinha('Opção invalida')
+                
+                break
 
             else:
                 comlinha("Valor do indice invalido")
@@ -882,6 +884,7 @@ def editar_produto():
 
             continue
 
+# Relatorio de vendas
 def relatorio():
 
     for indice in range(len(listas.relatorio)):
@@ -902,7 +905,7 @@ def excluir_produto():
         for indice in range(len(listas.estoque)):
             comlinha(f'{indice} - {listas.estoque[indice]}')
 
-        excluir_produto = recebe_comlinha_str('Deseja excluir um item? [S/N]').upper()
+        excluir_produto = recebe_comlinha_str('Deseja excluir um item? [S/N]: ').upper()
 
         if excluir_produto == 'S':
             indice3 = recebe_comlinha("Digite o indice do produto que deseja excluir: ")
@@ -931,6 +934,7 @@ def listar_produtos():
     for indice in range(len(listas.estoque)):
         comlinha(f'{indice} - {listas.estoque[indice]}')
 
+# Área de manutenção de estoque e ralatorio de vendas
 def menu_admin():
     while True:
         comlinha('Menu de login'.center(60))
