@@ -53,7 +53,7 @@ while True:
                 continue
 
             # Adiciona o produto ao carrinho ou pesquisa de novo
-            funcoes.menu_pesquisa()
+            funcoes.menu_pesquisa('nome')
 
         # Filtro de produto
         case 2:
@@ -68,7 +68,7 @@ while True:
                 continue
 
             # Adiciona o produto ao carrinho ou pesquisa de novo    
-            funcoes.menu_pesquisa()
+            funcoes.menu_pesquisa('tipo')
         
         # Login
         case 3:
