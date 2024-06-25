@@ -191,11 +191,12 @@ def pesquisas(chave):
                  return True
             
 # Adiciona o produto ao carrinho ou pesquisa de novo
-def menu_pesquisa():
+def menu_pesquisa(a):
      
     # Exibindo produto
     exibir_lista(listas.pesquisa)
      
+    encontrado_pesquisa = False 
     encontrado_carrinho = False
      
     while True:
@@ -312,13 +313,18 @@ def menu_pesquisa():
             case 2:
 
                 # Recebendo busca
-                encontrado_pesquisa = pesquisas()
+                encontrado_pesquisa = pesquisas(a)
 
                 # Produto não existe no estoque
                 if encontrado_pesquisa == False:
                     comlinha('Produto não encontrado, voltando ao menu principal')
 
                     break
+
+                else:
+                    # Exibindo produto
+                    exibir_lista(listas.pesquisa)
+                    continue
 
             #Voltar ao menu principal
             case 0:
